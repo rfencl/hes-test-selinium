@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="WebDriverWrapperTestSuite" verbose="1">
+    <test name="WebDriverWrapperTests">
+        <classes>
+            <class name="com.qa.webdriver.WebDriverWrapperTest"/>
+            <class name="com.qa.webdriver.WebDriverWrapperExampleTest"/>
+        </classes>
+    </test>
+</suite>
