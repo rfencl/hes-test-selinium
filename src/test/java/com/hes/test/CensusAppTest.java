@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.List;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 import java.sql.Connection;
@@ -75,8 +76,8 @@ public class CensusAppTest {
         } catch (java.sql.SQLException sqle) {
             log.error("Error deleting records {}", sqle.getMessage());
         }
-
     }
+
 
     @Test(priority = 1)
     public void testAddPersonToHouseholdUI() {
@@ -337,6 +338,33 @@ public class CensusAppTest {
     public static void tearDown() {
         if (driver != null) {
             driver.quit();
+        }
+    }
+
+    @Ignore("Run this if the docker container is started the first time.")
+    @Test
+    public static void insertUserRecords() {
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+            Statement stmt = conn.createStatement();
+
+            String householdSql = "INSERT INTO public.\"Household\" " +
+              "(id, \"homeType\", \"ownership\", \"lienholderId\", address1, address2, city, \"state\", zip) " +
+              "VALUES(1, 'HOUSE'::public.\"HomeType\", 'MORTGAGE'::public.\"Ownership\", NULL, '1111 Main St.', '', 'Somewhere', 'CA'::public.\"State\", '90210')";
+
+            stmt.executeUpdate(householdSql);
+
+            String userSql = "INSERT INTO public.\"User\" " +
+              "(id, \"name\", email, image, \"password\", \"role\", \"householdId\", \"isTwoFactorEnabled\") " +
+              "VALUES(1, 'Fake Edwards', 'fake.edwards2@example.com', '/images/11.avif', '$2a$10$duFK2o1COHpWVrCXMV/xJOF8dzgJOt.sPXKVRFqNESOQ3Pr0AH6P6', 'USER'::public.\"UserRole\", 1, false)";
+            int rowCount = stmt.executeUpdate(userSql);
+
+            assertEquals(rowCount , 1, "Record should be added successfully.");
+
+        } catch (java.sql.SQLException sqle) {
+            // Skip the test if DB isn't available or credentials are incorrect
+            log.error(sqle.getMessage());
+            org.testng.SkipException skip = new org.testng.SkipException("Skipping DB test: " + sqle.getMessage());
+            throw skip;
         }
     }
 }
