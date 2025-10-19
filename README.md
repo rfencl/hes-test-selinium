@@ -1,6 +1,9 @@
 # hes-test-selinium
 
 This is the selinium implementaion of the hes-interview coding assignment.
+The test assumes that the User and Household have already been added to the database.
+I have supplied a test called insertUserRecords to poplulate those tables.
+
 
 ## Key Features
 1. The parameters are all read from an environment file ( the values are the same as the defaults for clarity as this is an exercise).
