@@ -1,5 +1,7 @@
 package com.hes.test;
 
+import com.qa.pojo.RecordPojo;
+import com.qa.util.JsonSerializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.openqa.selenium.By;
@@ -238,13 +240,17 @@ public class CensusAppTest {
         assertTrue(body.contains("\"success\""), "API response should indicate success");
         assertTrue(body.contains("\"records\""), "API response should contain records array");
         
-        // Log records for debugging
+        // Extra Credit, Persist the json response as a POJO
+        // Note: the actual repsonse is a JSON array, I'm just stripping the '[' and ']' so I can use
+        // JsonSerializable fromJson.
         if (body.contains("\"records\":[")) {
             log.info("\nFound records in response:");
             int start = body.indexOf("\"records\":[") + 10;
             int end = body.indexOf("]", start) + 1;
-            String records = body.substring(start, end);
+            String records = body.substring(start+1, end-1);
             log.info(records);
+            RecordPojo rec = new RecordPojo().fromJson(records);
+            log.info(String.valueOf(rec));
         }
     }
 
